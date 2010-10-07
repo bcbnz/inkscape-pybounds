@@ -93,6 +93,20 @@ class BoundingBox:
         self.bottom = min(self.bottom, point[1])
         self.top = max(self.top, point[1])
 
+    def extend_x(self, x):
+        """Extend the box to include the given x point.
+
+        """
+        self.left = min(self.left, x)
+        self.right = max(self.right, x)
+
+    def extend_y(self, y):
+        """Extend the box to include the given y point.
+
+        """
+        self.bottom = min(self.bottom, y)
+        self.top = max(self.top, y)
+
 def get_bounding_box(obj, box=None):
     """Get the bounding box of the given object. If an existing box
     is given in the box parameter, it is extended to encompass the
