@@ -56,6 +56,24 @@ class BoundingBox:
             return False
         return True
 
+    def contains_x(self, x):
+        """Check if the given x-value is within the range of x-values
+        encompassed by the box.
+
+        """
+        if x < self.left or x > self.right:
+            return False
+        return True
+
+    def contains_y(self, y):
+        """Check if the given y-value is within the range of y-values
+        encompassed by the box.
+
+        """
+        if y < self.bottom or y > self.top:
+            return False
+        return True
+
     def union(self, box):
         """Extend this box to include the area of the other box.
 
