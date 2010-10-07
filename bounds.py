@@ -187,13 +187,16 @@ def get_bounding_box(obj, box=None):
     and returned.
 
     """
-    stbox = simpletransform.computeBBox([obj])
-    if box is None:
-        box = BoundingBox(stbox[0], stbox[1], stbox[2], stbox[3])
+
+    if obj.tag == 'path' or obj.tag == inkex.addNS('path', 'svg'):
+        objbox = path_bounding_box(obj)
     else:
-        box.extend((stbox[0], stbox[2]))
-        box.extend((stbox[1], stbox[3]))
-    return box
+        objbox = BoundingBox(0, 0, 0, 0)
+
+    if box is None:
+        return objbox
+    else:
+        return box.union(objbox)
 
 def draw_bounding_box(obj, style=None, replace=False):
     """Draws the bounding box of the given object.
