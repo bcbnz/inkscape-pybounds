@@ -23,8 +23,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import gettext
+_ = gettext.gettext
+
 import inkex
 import simpletransform
+import simplepath
 
 
 class BoundingBox:
@@ -106,6 +110,75 @@ class BoundingBox:
         """
         self.bottom = min(self.bottom, y)
         self.top = max(self.top, y)
+
+def path_bounding_box(path, box=None):
+    """Compute the bounding box for a path. If an existing bounding box is
+    given in the box parameter, it is extended to encompass the path and
+    returned. Otherwise, a new bounding box is created and returned.
+
+    Currently, this function returns loose (but encompassing) bounds for
+    cubic and quadratic Bézier curves, and incorrect bounds for elliptical
+    arcs.
+
+    """
+
+    # Get the transform
+    transform = simpletransform.parseTransform(path.get('transform', ''))
+
+    # Parse the path details.
+    # Note that when parsing all path segments are converted to absolute
+    # coordinates. It also converts H and V segments to L, S segments to C and
+    # T segments to Q.
+    parsed = simplepath.parsePath(path.get('d'))
+
+    # Starting point
+    current = parsed[0][1]
+    objbox = BoundingBox(current[0], current[0], current[1], current[1])
+
+    # Loop through each segment.
+    for type,params in parsed[1:]:
+        # End of path
+        if type == 'Z':
+            break
+
+        # Line or move to
+        elif type == 'L' or type == 'M':
+            objbox.extend(params)
+            current = params
+
+        # Cubic Bézier curve
+        # This is a loose bound using the fact that the curve is contained
+        # within the convex hull of the four points defining it.
+        elif type == 'C':
+            objbox.extend(params[0:2])
+            objbox.extend(params[2:4])
+            objbox.extend(params[4:6])
+            current = params[4:6]
+
+        # Quadratic Bézier curve
+        # This is a loose bound using the fact that the curve is contained
+        # within the convex hull of the three points defining it.
+        elif type == 'Q':
+            objbox.extend(params[0:2])
+            objbox.extend(params[2:4])
+            current = params[2:4]
+
+        # Elliptical arc
+        # Currently not handled properly - just ensures the endpoints are in
+        # the box.
+        elif type == 'A':
+            objbox.extend(params[5:7])
+            current = params[5:7]
+
+        # Unknown segment type
+        else:
+            raise Exception(_('Unknown path segment type %s.' % type))
+
+    # Returnt the appropriate box
+    if box is None:
+        return objbox
+    else:
+        return box.union(objbox)
 
 def get_bounding_box(obj, box=None):
     """Get the bounding box of the given object. If an existing box
