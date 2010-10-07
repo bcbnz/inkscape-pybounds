@@ -23,6 +23,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import inkex
 import simpletransform
 
 
@@ -88,3 +89,42 @@ def get_bounding_box(obj, box=None):
         box.extend((stbox[0], stbox[2]))
         box.extend((stbox[1], stbox[3]))
     return box
+
+def draw_bounding_box(obj, style=None, replace=False):
+    """Draws the bounding box of the given object.
+
+    The required argument is the object to draw the bounding box of.
+    Two optional arguments can be given; the first, style, sets the
+    style to draw the bounding box with. If not given, it defaults to
+    the style of the object. The second, replace, is used to set
+    whether the bounding box replaces the object in the drawing or if
+    it is added to the drawing. It defaults to False.
+
+    """
+
+    # Default to the style of the given object
+    if style is None:
+        style = obj.get('style')
+
+    # Get the bounding box
+    box = get_bounding_box(obj)
+
+    # Convert the bounding box to path data
+    points = (box.left, box.bottom, box.right, box.bottom,
+              box.right, box.top, box.left, box.top)
+    d = 'M%f %f %f %f %f %f %f %f z' % points
+
+    # Create the new node
+    boxobj = inkex.etree.Element('path')
+    boxobj.set('style', style)
+    boxobj.set('d', d)
+
+    # Get the parent of the object
+    parent = obj.getparent()
+
+    # Insert the box outline
+    parent.insert(parent.index(obj) + 1, boxobj)
+
+    # Remove the object if desired
+    if replace:
+       parent.remove(node)
