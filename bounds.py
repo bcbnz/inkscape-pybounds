@@ -114,15 +114,13 @@ class BoundingBox:
 def cubic_bounding_box(p0, p1, p2, p3, box=None):
     """Calculate the bounding box of a cubic Bézier curve.
 
-    The four required arguments are the four points determining
-    the curve, each of which is a pair of floating point values
-    (x, y). p0 and p3 are the endpoints, while p2 and p3 are the
-    control points.
+    The four required arguments are the four points describing the curve, each
+    of which is a pair of numbers (x, y). p0 and p3 are the endpoints, while p1
+    and p2 are the control points.
 
-    An existing BoundingBox can be given in the box argument, in
-    which case it is extended to encompass the Bézier curve and
-    returned. If no existing box is given, a new one is created and
-    returned.
+    An existing BoundingBox can be given in the box argument, in which case it
+    is extended to encompass the Bézier curve and returned. If no existing box
+    is given, a new one is created and returned.
 
     """
 
