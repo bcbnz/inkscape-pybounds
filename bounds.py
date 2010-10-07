@@ -23,6 +23,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import simpletransform
+
+
 class BoundingBox:
     """A class which represents a bounding box. Has four attributes
     (left, right, bottom and top) defining the edges of the box, and
@@ -70,3 +73,18 @@ class BoundingBox:
         self.right = max(self.right, point[0])
         self.bottom = min(self.bottom, point[1])
         self.top = max(self.top, point[1])
+
+def get_bounding_box(obj, box=None):
+    """Get the bounding box of the given object. If an existing box
+    is given in the box parameter, it is extended to encompass the
+    object and returned. If no box is given, a new one is created
+    and returned.
+
+    """
+    stbox = simpletransform.computeBBox([obj])
+    if box is None:
+        box = BoundingBox(stbox[0], stbox[1], stbox[2], stbox[3])
+    else:
+        box.extend((stbox[0], stbox[2]))
+        box.extend((stbox[1], stbox[3]))
+    return box
