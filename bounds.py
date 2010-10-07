@@ -25,11 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import gettext
 _ = gettext.gettext
+from math import sqrt
 
 import inkex
 import simpletransform
 import simplepath
-
 
 class BoundingBox:
     """A class which represents a bounding box. Has four attributes
@@ -111,6 +111,121 @@ class BoundingBox:
         self.bottom = min(self.bottom, y)
         self.top = max(self.top, y)
 
+def cubic_bounding_box(p0, p1, p2, p3, box=None):
+    """Calculate the bounding box of a cubic Bézier curve.
+
+    The four required arguments are the four points determining
+    the curve, each of which is a pair of floating point values
+    (x, y). p0 and p3 are the endpoints, while p2 and p3 are the
+    control points.
+
+    An existing BoundingBox can be given in the box argument, in
+    which case it is extended to encompass the Bézier curve and
+    returned. If no existing box is given, a new one is created and
+    returned.
+
+    """
+
+    # Make sure the box encompasses the endpoints
+    if box is None:
+        box = BoundingBox(p0[0], p3[0], p0[1], p3[1])
+    else:
+        box.extend(p0)
+        box.extend(p1)
+
+    # All the points of a cubic Bézier curve lie in the convex hull of the
+    # four points. So if the box already includes p1 and p2, it contains the
+    # entire curve.
+    contains_x = box.contains_x(p1[0]) and box.contains_x(p2[0])
+    contains_y = box.contains_y(p1[1]) and box.contains_y(p2[1])
+
+    # The cubic Bézier curve is defined as the parametric function
+    #
+    # f(t) = a*t^3 + b*t^2 + c*t + d
+    #
+    # where
+    # a = P0 - 3*P1 + 3*P2 - P3
+    # b = 3*P1 - 6*P2 + 3*P3
+    # c = 3*P2 - 3*P3
+    # d = P3
+    #
+    # To find the extent of the curve, we need to find the locations of the
+    # local maxima and minima by setting the derivative f'(t) = 0 and solving
+    # for t. The derivative is:
+    #
+    # f'(t) = 3a*t^2 + 2b*t + c
+    #
+    # To solve for t we need to use the quadratic formula. This may return two
+    # values; as the Bézier curve is only defined for 0 <= t <= 1, we can
+    # discard any values outside this. Finally, we evaluate f(t) at the
+    # value(s) of t we found, and set the bounding box to enclose these
+    # extrema. Note that we do this in two steps, one for the x-values and one
+    # for the y-values, to avoid unnecessary computation when the box already
+    # contains the x/y parts of the curve.
+
+    # Calculate the extent of the curve in the x-direction
+    if not contains_x:
+        # Calculate the function parameters
+        a = p0[0] - 3*p1[0] + 3*p2[0] - p3[0]
+        b = 3*(p1[0] - 2*p2[0] + p3[0])
+        c = 3*(p2[0] - p3[0])
+        d = p3[0]
+        f = lambda t: a*t**3 + b*t**2 + c*t + d
+
+        # If a is zero, the curve is a parabola rather than a cubic, and the
+        # derivative is therefore a line
+        if a == 0:
+            t = -c / (2*b)
+            if t > 0.0 and t < 1.0:
+                box.extend_x(f(t))
+
+        else:
+            # The determinant of the derivative
+            determinant = (2*b)**2 - (12*a*c)
+
+            # Can't be negative
+            if determinant >= 0:
+                s = sqrt(determinant)
+                t = (-2*b + s) / (6*a)
+                if t > 0.0 and t < 1.0:
+                    box.extend_x(f(t))
+                t = (-2*b - s) / (6*a)
+                if t > 0.0 and t < 1.0:
+                    box.extend_x(f(t))
+
+    # Calculate the extent of the curve in the y-direction
+    if not contains_y:
+        # Calculate the function parameters
+        a = p0[1] - 3*p1[1] + 3*p2[1] - p3[1]
+        b = 3*(p1[1] - 2*p2[1] + p3[1])
+        c = 3*(p2[1] - p3[1])
+        d = p3[1]
+        f = lambda t: a*t**3 + b*t**2 + c*t + d
+
+        # If a is zero, the curve is a parabola rather than a cubic, and the
+        # derivative is therefore a line
+        if a == 0:
+            t = -c / (2*b)
+            if t > 0.0 and t < 1.0:
+                box.extend_y(f(t))
+
+        else:
+            # The determinant of the derivative
+            determinant = (2*b)**2 - (12*a*c)
+
+            # Can't be negative
+            if determinant >= 0:
+                s = sqrt(determinant)
+                t = (-2*b + s) / (6*a)
+                if t > 0.0 and t < 1.0:
+                    box.extend_y(f(t))
+                t = (-2*b - s) / (6*a)
+                if t > 0.0 and t < 1.0:
+                    box.extend_y(f(t))
+
+    # And done
+    return box
+
 def path_bounding_box(path, box=None):
     """Compute the bounding box for a path. If an existing bounding box is
     given in the box parameter, it is extended to encompass the path and
@@ -147,12 +262,12 @@ def path_bounding_box(path, box=None):
             current = params
 
         # Cubic Bézier curve
-        # This is a loose bound using the fact that the curve is contained
-        # within the convex hull of the four points defining it.
         elif type == 'C':
-            objbox.extend(params[0:2])
-            objbox.extend(params[2:4])
-            objbox.extend(params[4:6])
+            p0 = current
+            p1 = params[0:2]
+            p2 = params[2:4]
+            p3 = params[4:6]
+            objbox = cubic_bounding_box(p0, p1, p2, p3, objbox)
             current = params[4:6]
 
         # Quadratic Bézier curve
