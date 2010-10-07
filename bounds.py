@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Functions to work with bounding boxes in Inkscape extensions. This
 is largely based upon the src/helper/geom.cpp file from the
