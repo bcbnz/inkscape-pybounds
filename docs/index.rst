@@ -2,19 +2,24 @@
 inkscape-pybounds
 =================
 
-Contents:
-=========
+User guide
+==========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    moduleref
+
+Implementation notes
+====================
+
+.. toctree::
+   :maxdepth: 1
+
    bezier
 
-Indices and tables
-==================
+:ref:`genindex`
+===============
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
+:ref:`search`
+=============

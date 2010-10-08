@@ -10,8 +10,10 @@ sys.path.append(os.path.normpath('../'))
 sys.path.append('/usr/share/inkscape/extensions')
 
 # Extensions in use
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.pngmath']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.pngmath',
+             'sphinxtogithub']
 autoclass_content = 'both'
+pngmath_dvipng_args = ['-gamma 1.5', '-D 100']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -39,7 +41,8 @@ pygments_style = 'sphinx'
 # -- Options for HTML output ---------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.
-html_theme = 'default'
+html_theme_path = ['theme']
+html_theme = 'boundsdocs'
 
 # The name for this set of Sphinx documents.
 html_title = 'inkscape-pybounds %s' % version

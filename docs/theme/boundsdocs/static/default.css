@@ -1,0 +1,18 @@
+@import url(reset-fonts-grids.css);
+@import url(boundsdocs.css);
+@import url(homepage.css);
+
+/* -- math display ---------------------------------------------------------- */
+
+img.math {
+    display: inline !important;
+    vertical-align: middle;
+}
+
+div.body div.math p {
+    text-align: center;
+}
+
+span.eqno {
+    float: right;
+}
