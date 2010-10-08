@@ -37,6 +37,15 @@ Implementation notes
 
    bezier
 
+Licenses
+========
+
+.. toctree::
+   :maxdepth: 1
+
+   codelicense
+   doclicense
+
 :ref:`genindex`
 ===============
 
