@@ -341,7 +341,7 @@ def path_bounding_box(path, box=None):
     else:
         return box.union(objbox)
 
-def get_bounding_box(obj, box=None):
+def object_bounding_box(obj, box=None):
     """Get the bounding box of the given object. If an existing box
     is given in the box parameter, it is extended to encompass the
     object and returned. If no box is given, a new one is created
@@ -376,7 +376,7 @@ def draw_bounding_box(obj, style=None, replace=False):
         style = obj.get('style')
 
     # Get the bounding box
-    box = get_bounding_box(obj)
+    box = object_bounding_box(obj)
 
     # Convert the bounding box to path data
     points = (box.left, box.bottom, box.right, box.bottom,
