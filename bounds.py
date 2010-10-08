@@ -227,69 +227,61 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
 
     # All the points of a cubic Bézier curve lie in the convex hull of the
     # four points. So if the box already includes p1 and p2, it contains the
-    # entire curve.
+    # entire curve, and thus we can avoid calculating the extrema.
     contains_x = box.contains_x(p1[0]) and box.contains_x(p2[0])
     contains_y = box.contains_y(p1[1]) and box.contains_y(p2[1])
 
+    # Helper function to calculate the extrema values for the given points.
+    # Used since identical logic is required to calculate both x and y extrema.
+    def extrema_values(p0, p1, p2, p3):
+        # Values for the quadratic formula
+        # Note a is actually 2a - it is always used as 2a or 4a so this reduces
+        # the number of computations.
+        a = 6*(p1-p0) - 12*(p2-p1) + 6*(p3-p2)
+        b = -6*(p1-p0) + 6*(p2-p1)
+        c = 3*(p1-p0)
+
+        # Check the discriminant - solutions must be real
+        discriminant = b**2 - (2*a*c)
+        if discriminant < 0:
+            return []
+
+        # Lambda function to calculate value from location
+        bezier = lambda t: p0*(1-t)**3 + 3*p1*t*(1-t)**2 + 3*p2*(1-t)*t**2 + p3*t**3
+
+        # Value of -b/2a is used repeatedly
+        ba = -b / a
+
+        # Single (repeated) real value
+        if discriminant == 0:
+            t = ba
+            if t > 0.0 and t < 1.0:
+                return [bezier(t)]
+            else:
+                return []
+
+        # Pair of values
+        vals = []
+        discriminant = sqrt(discriminant) / a
+        t = ba + discriminant
+        if t > 0.0 and t < 1.0:
+            vals.append(bezier(t))
+        t = ba - discriminant
+        if t > 0.0 and t < 1.0:
+            vals.append(bezier(t))
+        return vals
+
     # Calculate the extent of the curve in the x-direction
     if not contains_x:
-        # Calculate the function parameters
-        a = p0[0] - 3*p1[0] + 3*p2[0] - p3[0]
-        b = 3*(p1[0] - 2*p2[0] + p3[0])
-        c = 3*(p2[0] - p3[0])
-        d = p3[0]
-        f = lambda t: a*t**3 + b*t**2 + c*t + d
-
-        # If a is zero, the curve is a parabola rather than a cubic, and the
-        # derivative is therefore a line
-        if a == 0:
-            t = -c / (2*b)
-            if t > 0.0 and t < 1.0:
-                box.extend_x(f(t))
-
-        else:
-            # The discriminant of the derivative
-            determinant = (2*b)**2 - (12*a*c)
-
-            # Can't be negative
-            if determinant >= 0:
-                s = sqrt(determinant)
-                t = (-2*b + s) / (6*a)
-                if t > 0.0 and t < 1.0:
-                    box.extend_x(f(t))
-                t = (-2*b - s) / (6*a)
-                if t > 0.0 and t < 1.0:
-                    box.extend_x(f(t))
+        vals = extrema_values(p0[0], p1[0], p2[0], p3[0])
+        for x in vals:
+            box.extend_x(x)
 
     # Calculate the extent of the curve in the y-direction
     if not contains_y:
-        # Calculate the function parameters
-        a = p0[1] - 3*p1[1] + 3*p2[1] - p3[1]
-        b = 3*(p1[1] - 2*p2[1] + p3[1])
-        c = 3*(p2[1] - p3[1])
-        d = p3[1]
-        f = lambda t: a*t**3 + b*t**2 + c*t + d
-
-        # If a is zero, the curve is a parabola rather than a cubic, and the
-        # derivative is therefore a line
-        if a == 0:
-            t = -c / (2*b)
-            if t > 0.0 and t < 1.0:
-                box.extend_y(f(t))
-
-        else:
-            # The discriminant of the derivative
-            determinant = (2*b)**2 - (12*a*c)
-
-            # Can't be negative
-            if determinant >= 0:
-                s = sqrt(determinant)
-                t = (-2*b + s) / (6*a)
-                if t > 0.0 and t < 1.0:
-                    box.extend_y(f(t))
-                t = (-2*b - s) / (6*a)
-                if t > 0.0 and t < 1.0:
-                    box.extend_y(f(t))
+        vals = extrema_values(p0[1], p1[1], p2[1], p3[1])
+        for y in vals:
+            box.extend_y(y)
 
     # And done
     return box
