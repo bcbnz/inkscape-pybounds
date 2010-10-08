@@ -295,11 +295,27 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
     return box
 
 def path_bounding_box(path, box=None):
-    """Compute the bounding box for a path. If an existing bounding box is
-    given in the box parameter, it is extended to encompass the path and
-    returned. Otherwise, a new bounding box is created and returned.
+    """Compute the bounding box for an SVG path.
 
-    Currently, this function returns incorrect bounds for elliptical arcs.
+    :param path: The XML node defining the path.
+    :param box: The existing :class:`bounds.BoundingBox` if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the path.
+
+    SVG paths are a collection of various types of segments:
+
+    * Straight lines
+    * Quadratic Bézier curves
+    * Cubic Bézier curves
+    * Elliptical arcs
+
+    This function splits the path into its segments, calculates the bounding
+    box for each segment and combines them to get the bounding box of the path.
+    If an existing bounding box is given in the ``box`` parameter, it is
+    extended to encompass the path and returned. Otherwise, a new bounding box
+    is created and returned.
+
+    Currently, this function returns incorrect bounds for elliptical arcs. It
+    also ignores the ``transform`` property of the path.
 
     """
 
@@ -363,10 +379,22 @@ def path_bounding_box(path, box=None):
         return box.combine(objbox)
 
 def object_bounding_box(obj, box=None):
-    """Get the bounding box of the given object. If an existing box
-    is given in the box parameter, it is extended to encompass the
-    object and returned. If no box is given, a new one is created
-    and returned.
+    """Get the bounding box of an SVG object.
+
+    :param obj: The XML node defining the object.
+    :param box: The existing :class:`bounds.BoundingBox` if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the object.
+
+    SVG images are constructed of a number of primitive objects (paths,
+    rectangles, circles, groups etc.). This function takes an arbitrary object,
+    determines what type of object is, and calculates the bounding box
+    correspondingly.
+
+    If an existing bounding box is given in the ``box`` parameter, it is
+    extended to encompass the object and returned. Otherwise, a new bounding
+    box is created and returned.
+
+    Currently, this function can only handle ``path`` objects.
 
     """
 
@@ -383,12 +411,15 @@ def object_bounding_box(obj, box=None):
 def draw_bounding_box(obj, style=None, replace=False):
     """Draws the bounding box of the given object.
 
-    The required argument is the object to draw the bounding box of.
-    Two optional arguments can be given; the first, style, sets the
-    style to draw the bounding box with. If not given, it defaults to
-    the style of the object. The second, replace, is used to set
-    whether the bounding box replaces the object in the drawing or if
-    it is added to the drawing. It defaults to False.
+    :param obj: The XML node representing the object.
+    :param style: The SVG style to draw the bounding box with.
+    :param replace: Whether to replace the object with its bounding box.
+
+    This function draws the bounding box around the given object. If no style
+    is specified, the style of the object is used to draw the bounding box. If
+    ``replace`` is ``True``, the object is removed from the image and is
+    replaced by its bounding box. If it is ``False``, the bounding box is drawn
+    on top of the object.
 
     """
 
