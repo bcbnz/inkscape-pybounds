@@ -140,13 +140,22 @@ class BoundingBox:
 def quadratic_bounding_box(p0, p1, p2, box=None):
     """Calculate the bounding box of a quadratic Bézier curve.
 
-    The three required arguments are the three points describing the curve,
-    each of which is a pair of numbers (x, y). p0 is the start point, p1 the
-    control point and p2 the end point.
+    :param p0: The start point of the curve.
+    :param p1: The control point of the curve.
+    :param p2: The end point of the curve.
+    :param box: The current bounding box if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the curve.
 
-    An existing BoundingBox can be given in the box argument, in which case it
-    is extended to encompass the Bézier curve and returned. If no existing box
-    is given, a new one is created and returned.
+    The three points defining the curve must be given as pairs of numbers
+    ``(x,y)``.
+
+    If an existing BoundingBox is given in the ``box`` argument, it is extended
+    as necessary to encompass the curve and then returned. If no box is given,
+    a new one encompassing the curve is created and returned.
+
+    See the :ref:`bezier` page in the accompanying documentation for further
+    details on how Bézier curves are defined, and how their bounding boxes are
+    calculated.
 
     """
 
@@ -189,13 +198,23 @@ def quadratic_bounding_box(p0, p1, p2, box=None):
 def cubic_bounding_box(p0, p1, p2, p3, box=None):
     """Calculate the bounding box of a cubic Bézier curve.
 
-    The four required arguments are the four points describing the curve, each
-    of which is a pair of numbers (x, y). p0 and p3 are the endpoints, while p1
-    and p2 are the control points.
+    :param p0: The start point of the curve.
+    :param p1: The first control point of the curve.
+    :param p2: The second control point of the curve.
+    :param p3: The end point of the curve.
+    :param box: The current bounding box if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the curve.
 
-    An existing BoundingBox can be given in the box argument, in which case it
-    is extended to encompass the Bézier curve and returned. If no existing box
-    is given, a new one is created and returned.
+    The four points defining the curve must be given as pairs of numbers
+    ``(x,y)``.
+
+    If an existing BoundingBox is given in the ``box`` argument, it is extended
+    as necessary to encompass the curve and then returned. If no box is given,
+    a new one encompassing the curve is created and returned.
+
+    See the :ref:`bezier` page in the accompanying documentation for further
+    details on how Bézier curves are defined, and how their bounding boxes are
+    calculated.
 
     """
 
@@ -211,30 +230,6 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
     # entire curve.
     contains_x = box.contains_x(p1[0]) and box.contains_x(p2[0])
     contains_y = box.contains_y(p1[1]) and box.contains_y(p2[1])
-
-    # The cubic Bézier curve is defined as the parametric function
-    #
-    # f(t) = a*t^3 + b*t^2 + c*t + d
-    #
-    # where
-    # a = P0 - 3*P1 + 3*P2 - P3
-    # b = 3*P1 - 6*P2 + 3*P3
-    # c = 3*P2 - 3*P3
-    # d = P3
-    #
-    # To find the extent of the curve, we need to find the locations of the
-    # local maxima and minima by setting the derivative f'(t) = 0 and solving
-    # for t. The derivative is:
-    #
-    # f'(t) = 3a*t^2 + 2b*t + c
-    #
-    # To solve for t we need to use the quadratic formula. This may return two
-    # values; as the Bézier curve is only defined for 0 <= t <= 1, we can
-    # discard any values outside this. Finally, we evaluate f(t) at the
-    # value(s) of t we found, and set the bounding box to enclose these
-    # extrema. Note that we do this in two steps, one for the x-values and one
-    # for the y-values, to avoid unnecessary computation when the box already
-    # contains the x/y parts of the curve.
 
     # Calculate the extent of the curve in the x-direction
     if not contains_x:
@@ -253,7 +248,7 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
                 box.extend_x(f(t))
 
         else:
-            # The determinant of the derivative
+            # The discriminant of the derivative
             determinant = (2*b)**2 - (12*a*c)
 
             # Can't be negative
@@ -283,7 +278,7 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
                 box.extend_y(f(t))
 
         else:
-            # The determinant of the derivative
+            # The discriminant of the derivative
             determinant = (2*b)**2 - (12*a*c)
 
             # Can't be negative

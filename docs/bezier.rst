@@ -1,3 +1,5 @@
+.. _bezier:
+
 Bézier curves
 =============
 
