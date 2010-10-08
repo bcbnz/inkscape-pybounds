@@ -11,6 +11,7 @@ sys.path.append('/usr/share/inkscape/extensions')
 
 # Extensions in use
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.pngmath']
+autoclass_content = 'both'
 
 # The suffix of source filenames.
 source_suffix = '.rst'

@@ -37,6 +37,8 @@ BoundingBox
 .. autoclass:: bounds.BoundingBox
    :members:
 
+   **Attributes**
+
    .. attribute:: left
 
       The left-hand edge of the bounding box.
@@ -52,6 +54,8 @@ BoundingBox
    .. attribute:: top
 
       The top edge of the bounding box.
+
+   **Methods**
 
 Measurement functions
 ---------------------

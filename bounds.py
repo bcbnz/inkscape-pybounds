@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Functions to work with bounding boxes in Inkscape extensions. This
-is largely based upon the src/helper/geom.cpp file from the
-Inkscape source code.
-
-The code in geom.cpp is Copyright (C) 2008 Johan Engelen and is
-available under the GPL.
+Functions to calculate and work with bounding boxes in Inkscape extensions.
 
 Copyright (C) 2010 Blair Bonnett, blair.bonnett@gmail.com
 
@@ -38,16 +33,23 @@ version_info = (0, 9, 0, 'alpha', 1)
 hexversion = 0x000900a1
 
 class BoundingBox:
-    """A class which represents a bounding box. Has four attributes
-    (left, right, bottom and top) defining the edges of the box, and
+    """A class which represents a bounding box. It has four attributes
+    (left, right, bottom and top) which define the edges of the box, and
     a number of functions to work with the box.
 
     """
 
     def __init__(self, x0, x1, y0, y1):
-        """Create a new bounding box. The arguments are the two
-        x-points followed by the two y-points defining the edges of
-        the box.
+        """
+        :param x1: The x-value representing one vertical edge of the box.
+        :param x2: The x-value representing the other vertical edge.
+        :param y1: The y-value representing one horizontal edge of the box.
+        :param y2: The y-value representing the other horizontal edge.
+
+        When creating the box, the constructor will automatically choose the
+        lower of the two x-values for the left edge and the higher for the
+        right. Similarly, the lower y-value is used for the bottom of the box
+        and the higher for the top of the box.
 
         """
         self.left = min(x0, x1)
@@ -56,8 +58,10 @@ class BoundingBox:
         self.top = max(y0, y1)
 
     def contains(self, point):
-        """Check if the given point, specified as a pair (x, y), is
-        contained within this bounding box.
+        """Check if the given point is contained with this box.
+
+        :param point: The point to check specified as a pair of numbers (x,y).
+        :return: True or False.
 
         """
         if point[0] < self.left or point[0] > self.right:
@@ -67,8 +71,11 @@ class BoundingBox:
         return True
 
     def contains_x(self, x):
-        """Check if the given x-value is within the range of x-values
+        """Check if the given x value is within the range of x values
         encompassed by the box.
+
+        :param x: The x value to check.
+        :return: True or False
 
         """
         if x < self.left or x > self.right:
@@ -76,16 +83,22 @@ class BoundingBox:
         return True
 
     def contains_y(self, y):
-        """Check if the given y-value is within the range of y-values
+        """Check if the given y value is within the range of y values
         encompassed by the box.
+
+        :param y: The y value to check.
+        :return: True or False
 
         """
         if y < self.bottom or y > self.top:
             return False
         return True
 
-    def union(self, box):
-        """Extend this box to include the area of the other box.
+    def combine(self, box):
+        """Combines this box with another bounding box. This extends the edges
+        of this box as necessary to encompass the contents of the other box.
+
+        :param box: The other box.
 
         """
         self.left = min(self.left, box.left)
@@ -94,8 +107,9 @@ class BoundingBox:
         self.top = max(self.top, box.top)
 
     def extend(self, point):
-        """Extend the box to include the given point which should be
-        a pair of floating point numbers (x,y).
+        """Extend the box as necessary to encompass the given point.
+
+        :param point: The point specified as a pair of numbers (x,y).
 
         """
         self.left = min(self.left, point[0])
@@ -104,14 +118,20 @@ class BoundingBox:
         self.top = max(self.top, point[1])
 
     def extend_x(self, x):
-        """Extend the box to include the given x point.
+        """Extend the width of the box as necessary to include the given x
+        point.
+
+        :param x: The x point to include.
 
         """
         self.left = min(self.left, x)
         self.right = max(self.right, x)
 
     def extend_y(self, y):
-        """Extend the box to include the given y point.
+        """Extend the height of the box as necessary to include the given y
+        point.
+
+        :param y: The y point to include.
 
         """
         self.bottom = min(self.bottom, y)
@@ -345,7 +365,7 @@ def path_bounding_box(path, box=None):
     if box is None:
         return objbox
     else:
-        return box.union(objbox)
+        return box.combine(objbox)
 
 def object_bounding_box(obj, box=None):
     """Get the bounding box of the given object. If an existing box
@@ -363,7 +383,7 @@ def object_bounding_box(obj, box=None):
     if box is None:
         return objbox
     else:
-        return box.union(objbox)
+        return box.combine(objbox)
 
 def draw_bounding_box(obj, style=None, replace=False):
     """Draws the bounding box of the given object.
