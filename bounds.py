@@ -31,6 +31,12 @@ import inkex
 import simpletransform
 import simplepath
 
+
+# Module version information as per the sys module
+version = '0.9.0 alpha 1'
+version_info = (0, 9, 0, 'alpha', 1)
+hexversion = 0x000900a1
+
 class BoundingBox:
     """A class which represents a bounding box. Has four attributes
     (left, right, bottom and top) defining the edges of the box, and
