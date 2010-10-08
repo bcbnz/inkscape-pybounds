@@ -10,7 +10,7 @@ sys.path.append(os.path.normpath('../'))
 sys.path.append('/usr/share/inkscape/extensions')
 
 # Extensions in use
-extensions = ['sphinx.ext.coverage', 'sphinx.ext.pngmath']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.pngmath']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
