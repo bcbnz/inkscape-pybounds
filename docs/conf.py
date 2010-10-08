@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import os.path
+import sys
+
+# Add module path to system path so autodoc can find it
+sys.path.append(os.path.normpath('../'))
+
+# Add path to inkex
+sys.path.append('/usr/share/inkscape/extensions')
+
 # Extensions in use
 extensions = ['sphinx.ext.coverage', 'sphinx.ext.pngmath']
 
@@ -14,8 +23,8 @@ project = u'inkscape-pybounds'
 copyright = u'2010, Blair Bonnett'
 
 # Version (x.y) and release (with alpha/beta etc.)
-version = '0.9'
-release = '0.9'
+from bounds import version
+release = version
 
 # Documents not to include
 unused_docs = []
@@ -32,7 +41,7 @@ pygments_style = 'sphinx'
 html_theme = 'default'
 
 # The name for this set of Sphinx documents.
-html_title = 'inkscape-pybounds'
+html_title = 'inkscape-pybounds %s' % version
 
 # Format for timestamp.
 html_last_updated_fmt = '%b %d, %Y'
