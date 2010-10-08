@@ -129,7 +129,7 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
         box = BoundingBox(p0[0], p3[0], p0[1], p3[1])
     else:
         box.extend(p0)
-        box.extend(p1)
+        box.extend(p3)
 
     # All the points of a cubic Bézier curve lie in the convex hull of the
     # four points. So if the box already includes p1 and p2, it contains the
