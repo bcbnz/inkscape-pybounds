@@ -111,6 +111,55 @@ class BoundingBox:
         self.bottom = min(self.bottom, y)
         self.top = max(self.top, y)
 
+def quadratic_bounding_box(p0, p1, p2, box=None):
+    """Calculate the bounding box of a quadratic Bézier curve.
+
+    The three required arguments are the three points describing the curve,
+    each of which is a pair of numbers (x, y). p0 is the start point, p1 the
+    control point and p2 the end point.
+
+    An existing BoundingBox can be given in the box argument, in which case it
+    is extended to encompass the Bézier curve and returned. If no existing box
+    is given, a new one is created and returned.
+
+    """
+
+    # Make sure the box encompasses the endpoints
+    if box is None:
+        box = BoundingBox(p0[0], p2[0], p0[1], p2[1])
+    else:
+        box.extend(p0)
+        box.extend(p2)
+
+    # All the points of a cubic Bézier curve lie in the convex hull of the
+    # three points. So if the box already includes p1, it contains the entire
+    # curve.
+    contains_x = box.contains_x(p1[0])
+    contains_y = box.contains_y(p1[1])
+
+    # If not already encompassed, find the extrema in the x direction
+    if not contains_x:
+        q0 = p1[0] - p0[0]
+        q1 = p2[0] - p1[0]
+        t = q0 / (q0 - q1)
+
+        if t > 0.0 and t < 1.0:
+            x = p0[0]*(1 - t)**2 + p1[0]*2*(1-t)*t + p2[0]*t**2
+            box.extend_x(x)
+
+    # If not already encompassed, find the extrema in the y direction
+    if not contains_y:
+        q0 = p1[1] - p0[1]
+        q1 = p2[1] - p1[1]
+        t = q0 / (q0 - q1)
+
+        if t > 0.0 and t < 1.0:
+            y = p0[1]*(1 - t)**2 + p1[1]*2*(1-t)*t + p2[1]*t**2
+            box.extend_y(y)
+
+    # And done
+    return box
+
 def cubic_bounding_box(p0, p1, p2, p3, box=None):
     """Calculate the bounding box of a cubic Bézier curve.
 
@@ -229,9 +278,7 @@ def path_bounding_box(path, box=None):
     given in the box parameter, it is extended to encompass the path and
     returned. Otherwise, a new bounding box is created and returned.
 
-    Currently, this function returns loose (but encompassing) bounds for
-    cubic and quadratic Bézier curves, and incorrect bounds for elliptical
-    arcs.
+    Currently, this function returns incorrect bounds for elliptical arcs.
 
     """
 
@@ -272,8 +319,9 @@ def path_bounding_box(path, box=None):
         # This is a loose bound using the fact that the curve is contained
         # within the convex hull of the three points defining it.
         elif type == 'Q':
-            objbox.extend(params[0:2])
-            objbox.extend(params[2:4])
+            p1 = params[0:2]
+            p2 = params[2:4]
+            objbox = quadratic_bounding_box(current, p1, p2, objbox)
             current = params[2:4]
 
         # Elliptical arc
