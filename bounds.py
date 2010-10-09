@@ -345,8 +345,6 @@ def path_bounding_box(path, box=None):
             current = params[4:6]
 
         # Quadratic Bézier curve
-        # This is a loose bound using the fact that the curve is contained
-        # within the convex hull of the three points defining it.
         elif type == 'Q':
             p1 = params[0:2]
             p2 = params[2:4]
