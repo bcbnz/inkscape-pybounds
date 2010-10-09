@@ -337,19 +337,15 @@ def path_bounding_box(path, box=None):
 
         # Cubic Bézier curve
         elif type == 'C':
-            p0 = current
-            p1 = params[0:2]
-            p2 = params[2:4]
-            p3 = params[4:6]
-            objbox = cubic_bounding_box(p0, p1, p2, p3, objbox)
-            current = params[4:6]
+            p1, p2, p3 = params
+            objbox = cubic_bounding_box(current, p1, p2, p3, objbox)
+            current = p3
 
         # Quadratic Bézier curve
         elif type == 'Q':
-            p1 = params[0:2]
-            p2 = params[2:4]
+            p1, p2 = params
             objbox = quadratic_bounding_box(current, p1, p2, objbox)
-            current = params[2:4]
+            current = p2
 
         # Elliptical arc
         # Currently not handled properly - just ensures the endpoints are in
