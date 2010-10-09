@@ -48,8 +48,43 @@ the centre point is calculated:
    c_x &= \cos(\varphi)c_x' - \sin(\varphi)c_y' + \frac{x_1 + x_2}{2} \\
    c_y &= \sin(\varphi)c_x' + \cos(\varphi)c_y' + \frac{y_1 + y_2}{2}
 
-Sweep angles
-------------
+Starting and sweep angles
+-------------------------
+
+The angle between two vectors :math:`\vec{a}` and :math:`\vec{b}` is given by
+
+.. math::
+
+   \Theta(\vec{a}, \vec{b}) = \mathrm{atan2}(b_y, b_x) - \mathrm{atan2}(a_y, a_x)
+
+The :math:`\mathrm{atan2}(y,x)` function is provided by most math libraries. It
+returns the arctangent of :math:`\frac{y}{x}`, using the signs of the inputs to
+get the correct quadrant for the angle. See the `Python math library
+documentation <http://docs.python.org/library/math.html#trigonometric-functions>`_
+for further information on :math:`\mathrm{atan2}`.
+
+The starting angle of the arc is calculated as follows:
+
+.. math::
+
+    \vec{a} &= (1, 0) \\
+    \vec{b} &= \left(\frac{x_m - c_x'}{r_x}, \frac{y_m - c_y}{r_y}\right) \\
+   \theta_1 &= \Theta(\vec{a}, \vec{b})
+
+The angle that the arc sweeps over is calculated as:
+
+.. math::
+
+        \vec{c} &= \left(\frac{-x_m - c_x'}{r_x}, \frac{-y_m - c_y}{r_y}\right) \\
+   \Delta\theta &= \Theta(\vec{b}, \vec{c}) \mod 360^\circ
+
+:math:`\Delta\theta` is adjusted by adding or subtracting 360 degrees as
+necessary to meet the conditions
+
+.. math::
+
+   &\Delta\theta < 0 \qquad f_S = 0 \\
+   &\Delta\theta > 0 \qquad \mathrm{otherwise}
 
 Extrema
 -------
