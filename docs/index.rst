@@ -36,6 +36,7 @@ Implementation notes
    :maxdepth: 1
 
    bezier
+   elliptarc
 
 Licenses
 ========
