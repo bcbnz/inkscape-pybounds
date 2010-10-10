@@ -68,14 +68,14 @@ The starting angle of the arc is calculated as follows:
 .. math::
 
     \vec{a} &= (1, 0) \\
-    \vec{b} &= \left(\frac{x_m - c_x'}{r_x}, \frac{y_m - c_y}{r_y}\right) \\
+    \vec{b} &= \left(\frac{x_m - c_x'}{r_x}, \frac{y_m - c_y'}{r_y}\right) \\
    \theta_1 &= \Theta(\vec{a}, \vec{b})
 
 The angle that the arc sweeps over is calculated as:
 
 .. math::
 
-        \vec{c} &= \left(\frac{-x_m - c_x'}{r_x}, \frac{-y_m - c_y}{r_y}\right) \\
+        \vec{c} &= \left(\frac{-x_m - c_x'}{r_x}, \frac{-y_m - c_y'}{r_y}\right) \\
    \Delta\theta &= \Theta(\vec{b}, \vec{c}) \mod 360^\circ
 
 :math:`\Delta\theta` is adjusted by adding or subtracting 360 degrees as
