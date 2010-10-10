@@ -18,16 +18,20 @@ functions to calculate the bounding boxes of the various SVG objects. These
 bounding boxes should all be tight bounds.
 
 **Note: This module is currently under initial development (hence the alpha tag
-in the version). Bounding boxes cannot be calculated for a number of SVG
+in the version). Bounding boxes cannot yet be calculated for a number of SVG
 objects, and the API is liable to change without notice.**
 
-User guide
-==========
+Module reference
+================
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   moduleref
+   moduleinfo
+   boundingbox
+   measureobjs
+   measuresegs
+   helperfuncs
 
 Implementation notes
 ====================
