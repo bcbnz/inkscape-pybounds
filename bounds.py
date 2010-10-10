@@ -545,13 +545,16 @@ def path_bounding_box(path, box=None):
 
         # Cubic Bézier curve
         elif type == 'C':
-            p1, p2, p3 = params
+            p1 = params[0:2]
+            p2 = params[2:4]
+            p3 = params[4:6]
             objbox = cubic_bounding_box(current, p1, p2, p3, objbox)
             current = p3
 
         # Quadratic Bézier curve
         elif type == 'Q':
-            p1, p2 = params
+            p1 = params[0:2]
+            p2 = params[2:4]
             objbox = quadratic_bounding_box(current, p1, p2, objbox)
             current = p2
 
