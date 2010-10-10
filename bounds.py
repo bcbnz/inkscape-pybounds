@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import gettext
 _ = gettext.gettext
-from math import sqrt
+from math import sqrt, sin, cos, tan, radians, atan2, pi
 
 import inkex
 import simpletransform
@@ -286,6 +286,215 @@ def cubic_bounding_box(p0, p1, p2, p3, box=None):
     # And done
     return box
 
+def elliptical_arc_bounding_box(start, rx, ry, rotation, large_arc, sweep, end,
+                                box=None):
+    """Compute the bounding box for an SVG elliptical arc.
+
+    :param start: The start point of the arc.
+    :param rx: The semi-major (x) radius of the arc.
+    :param ry: The semi-minor (y) radius of the arc.
+    :param rotation: The angle at which the x-axis of the arc is rotated from
+                     the x-axis of the image.
+    :param large_arc: If the angle swept by the arc is greater than 180 degrees.
+    :param sweep: Which direction the arc is swept in.
+    :param end: The end point of the arc.
+    :param box: The current bounding box if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the arc.
+
+    One of the types of segments available for use in an SVG path is the
+    elliptical arc. This is largely defined from the start and end points, and
+    the semi-major and semi-minor radii. This gives four possible arcs; the
+    ``large_arc`` and ``sweep`` flags set which arc is used. If ``sweep`` is
+    zero, the arg is swept through decreasing angles; otherwise it is swept
+    through increasing angles. If ``large_arc`` is zero, the arc will span 180
+    degrees or less; otherwise, it will be greater than 180 degrees. Finally,
+    the x-axis of the arc can be rotated from the x-axis of the image; the
+    angle it is rotated at (in degrees) is given by the ``rotation`` parameter.
+
+    This function calculates the bounding box necessary to contain an
+    elliptical arc. If an existing BoundingBox is given in the ``box``
+    argument, it is extended as necessary to encompass the arc and then
+    returned. If no box is given, a new one encompassing the arc is created and
+    returned.
+
+    As per the SVG 1.1 specification, out-of-range parameters are handled as
+    follows:
+
+    * If the start and end points are the same, the arc is not drawn. In this
+      case, the value of the ``box`` parameter (an existing bounding box or
+      ``None``) is returned.
+    * If either ``rx`` or ``ry`` is zero, the arc is treated as a straight line
+      segment.
+    * If either ``rx`` or ``ry`` are negative, the absolute value is used as
+      the corresponding radius.
+    * If ``rx``, ``ry`` and ``rotation`` are such that the ellipse is not big
+      enough to reach from the start to the end, the ellipse is scaled
+      uniformly until it can reach.
+    * Any non-zero value for either ``large_arc`` or ``sweep`` is treated as if
+      the value ``1`` was given.
+
+    See the :ref:`elliptarc` page in the accompanying documentation for further
+    details on how elliptical arcs are defined, and how their bounding boxes
+    are calculated.
+
+    """
+
+    # If the endpoints are the same, the elliptical arc will not be drawn.
+    if start == end:
+        return box
+
+    # Ensure the endpoints are in the box.
+    if box is None:
+        box = BoundingBox(start[0], end[0], start[1], end[1])
+    else:
+        box.extend(start)
+        box.extend(end)
+
+    # If either radius is zero, it is treated as a straight line. As we already
+    # added the endpoints, our work here is done.
+    if rx == 0 or ry == 0:
+        return box
+
+    # Make sure the radii are positive.
+    if rx < 0:
+        rx = -rx
+    if ry < 0:
+        ry = -ry
+
+    # Ensure the flags to boolean values. As per the SVG 1.1 specification,
+    # non-zero values for large_arc or sweep are treated as true.
+    if large_arc != 0:
+        large_arc = True
+    if sweep != 0:
+        sweep = True
+
+    # Convert rotation angle to radians as this is what the Python
+    # trigonometric functions work with. Also pre-compute the sine and cosine
+    # of the angle.
+    rotation = radians(rotation)
+    sin_rotation = sin(rotation)
+    cos_rotation = cos(rotation)
+
+    # Unpack the start and end points.
+    x1, y1 = start
+    x2, y2 = end
+
+    # Transform the origin to the midpoint of the line joining the start and
+    # end points.
+    xm =  (cos_rotation * (x1 - x2)/2.0) + (sin_rotation * (y1 - y2)/2.0)
+    ym = -(sin_rotation * (x1 - x2)/2.0) + (cos_rotation * (y1 - y2)/2.0)
+
+    # Pre-square some values.
+    rx2 = rx**2
+    ry2 = ry**2
+    xm2 = xm**2
+    ym2 = ym**2
+
+    # Numerator of the root used to calculated the transformed centre.
+    numerator = rx2*ry2 - rx2*ym2 - ry2*xm2
+
+    # If the numerator is negative, there are no solutions for the centre point
+    # (i.e., the radii are not large enough to join the start and end). Per the
+    # SVG 1.1 specification, we increase the radii to obtain a solution.
+    if numerator < 0.0:
+        s = sqrt(1.0 - numerator/(rx2*ry2))
+        rx = rx * s
+        ry = ry * s
+        rx2 = rx**2
+        ry2 = ry**2
+        root = 0.0
+
+    # Radii were large enough
+    else:
+        if large_arc == sweep:
+            root = -1 * sqrt(numerator/(rx2*ym2 + ry2*xm2))
+        else:
+            root = sqrt(numerator/(rx2*ym2 + ry2*xm2))
+
+    # Calculate the transformed centre
+    cxprime =  (root * rx * ym)/ry
+    cyprime = -(root * ry * xm)/rx
+
+    # Calculate the centre
+    cx = (cos_rotation * cxprime) - (sin_rotation * cyprime) + (x1 + x2)/2.0
+    cy = (sin_rotation * cxprime) + (cos_rotation * cyprime) + (y1 + y2)/2.0
+
+    # Function to calculate the angle between two vectors mod 360 degrees.
+    def angle_between_vectors(a, b):
+        atana = atan2(a[1], a[0])
+        atanb = atan2(b[1], b[0])
+        if atanb >= atana:
+            return atanb - atana;
+        return (2 * pi) - (atana - atanb);
+
+    # Calculate the start angle and angle the arc sweeps through
+    theta1 = angle_between_vectors((1.0, 0.0), ((xm - cxprime)/rx, (ym - cyprime)/ry))
+    dtheta = angle_between_vectors(((xm - cxprime)/rx,  (ym - cyprime)/ry),
+                                  ((-xm - cxprime)/rx, (-ym - cyprime)/ry))
+
+    # Make sure the sweep angle is in the correct range based upon the sweep
+    # flag.
+    if not sweep and dtheta > 0:
+        dtheta = dtheta - (2.0 * pi);
+    elif sweep and dtheta < 0:
+        dtheta = dtheta + (2.0 * pi);
+
+    # Convert to start and end angles in the range [-pi, pi] as this is the
+    # region atan2 will return extrema locations in.
+    if theta1 > pi:
+        start_angle = theta1 - (2*pi)
+    else:
+        start_angle = theta1
+    theta2 = start_angle + dtheta
+    if theta2 > pi:
+        end_angle = theta2 - (2*pi)
+    elif theta2 < -pi:
+        end_angle = theta2 + (2*pi)
+    else:
+        end_angle = theta2
+
+    # Helper function to check if the arc sweeps over the given angle.
+    def contains_angle(t):
+        if sweep:
+            if start_angle < end_angle:
+                return not (t < start_angle or t > end_angle)
+            else:
+                return not (t < start_angle and t > end_angle)
+        else:
+            if start_angle > end_angle:
+                return not (t > start_angle or t < end_angle)
+            else:
+                return not (t > start_angle and t < end_angle)
+
+    # Calculate the angle of the first maximas
+    thetax = atan2(-ry * tan(rotation), rx)
+    thetay = atan2(ry, rx * tan(rotation))
+
+    # The second maximas will be pi radians away
+    if thetax < 0:
+        xangles = [thetax, thetax + pi]
+    else:
+        xangles = [thetax, thetax - pi]
+    if thetay < 0:
+        yangles = [thetay, thetay + pi]
+    else:
+        yangles = [thetay, thetay - pi]
+
+    # Lambda functions to get the x or y value of the arc at a given angle
+    fx = lambda t: cx + (rx * cos(t) * cos_rotation) - (ry * sin(t) * sin_rotation)
+    fy = lambda t: cy + (rx * cos(t) * sin_rotation) + (ry * sin(t) * cos_rotation)
+
+    # Extend the box to include any extrema swept by the arc
+    for t in xangles:
+        if contains_angle(t):
+            box.extend_x(fx(t))
+    for t in yangles:
+        if contains_angle(t):
+            box.extend_y(fy(t))
+
+    # And done
+    return box
+
 def path_bounding_box(path, box=None):
     """Compute the bounding box for an SVG path.
 
@@ -306,8 +515,7 @@ def path_bounding_box(path, box=None):
     extended to encompass the path and returned. Otherwise, a new bounding box
     is created and returned.
 
-    Currently, this function returns incorrect bounds for elliptical arcs. It
-    also ignores the ``transform`` property of the path.
+    Currently, this function ignores the ``transform`` property of the path.
 
     """
 
@@ -348,11 +556,12 @@ def path_bounding_box(path, box=None):
             current = p2
 
         # Elliptical arc
-        # Currently not handled properly - just ensures the endpoints are in
-        # the box.
         elif type == 'A':
-            objbox.extend(params[5:7])
-            current = params[5:7]
+            rx, ry, rotation, large_arc, sweep = params[0:5]
+            end = params[5:7]
+            objbox = elliptical_arc_bounding_box(current, rx, ry, rotation,
+                                                 large_arc, sweep, end, objbox)
+            current = end
 
         # Unknown segment type
         else:
