@@ -515,12 +515,12 @@ def path_bounding_box(path, box=None):
     extended to encompass the path and returned. Otherwise, a new bounding box
     is created and returned.
 
-    Currently, this function ignores the ``transform`` property of the path.
-
     """
 
     # Get the transform
-    transform = simpletransform.parseTransform(path.get('transform', ''))
+    transform = path.get('transform', None)
+    if transform:
+        transform = simpletransform.parseTransform(transform)
 
     # Parse the path details.
     # Note that when parsing all path segments are converted to absolute
@@ -530,6 +530,8 @@ def path_bounding_box(path, box=None):
 
     # Starting point
     current = parsed[0][1]
+    if transform:
+        simpletransform.applyTransformToPoint(transform, current)
     objbox = BoundingBox(current[0], current[0], current[1], current[1])
 
     # Loop through each segment.
@@ -540,14 +542,21 @@ def path_bounding_box(path, box=None):
 
         # Line or move to
         elif type == 'L' or type == 'M':
-            objbox.extend(params)
-            current = params
+            point = params
+            if transform:
+                simpletransform.applyTransformToPoint(transform, point)
+            objbox.extend(point)
+            current = point
 
         # Cubic Bézier curve
         elif type == 'C':
             p1 = params[0:2]
             p2 = params[2:4]
             p3 = params[4:6]
+            if transform:
+                simpletransform.applyTransformToPoint(transform, p1)
+                simpletransform.applyTransformToPoint(transform, p2)
+                simpletransform.applyTransformToPoint(transform, p3)
             objbox = cubic_bounding_box(current, p1, p2, p3, objbox)
             current = p3
 
@@ -555,6 +564,9 @@ def path_bounding_box(path, box=None):
         elif type == 'Q':
             p1 = params[0:2]
             p2 = params[2:4]
+            if transform:
+                simpletransform.applyTransformToPoint(transform, p1)
+                simpletransform.applyTransformToPoint(transform, p2)
             objbox = quadratic_bounding_box(current, p1, p2, objbox)
             current = p2
 
@@ -562,6 +574,8 @@ def path_bounding_box(path, box=None):
         elif type == 'A':
             rx, ry, rotation, large_arc, sweep = params[0:5]
             end = params[5:7]
+            if transform:
+                simpletransform.applyTransformToPoint(transform, end)
             objbox = elliptical_arc_bounding_box(current, rx, ry, rotation,
                                                  large_arc, sweep, end, objbox)
             current = end
