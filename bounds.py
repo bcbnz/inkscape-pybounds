@@ -590,6 +590,58 @@ def path_bounding_box(path, box=None):
     else:
         return box.combine(objbox)
 
+def rect_bounding_box(rect, box=None):
+    """Get the bounding box of an SVG rectangle.
+
+    :param rect: The XML node defining the object.
+    :param box: The existing :class:`bounds.BoundingBox` if available.
+    :return: A :class:`bounds.BoundingBox` encompassing the object.
+
+    """
+
+    # Get the position and dimension of the rectangle
+    x = float(rect.get('x', 0))
+    y = float(rect.get('y', 0))
+    width = float(rect.get('width'))
+    height = float(rect.get('height'))
+
+    # Width and height can't be negative
+    if width < 0:
+        raise ValueError(_('Width of rect object cannot be negative.'))
+    if height < 0:
+        raise ValueError(_('Height of rect object cannot be negative.'))
+
+    # Width or height of zero disables rendering
+    if width == 0 or height == 0:
+        return box
+
+    # Create the four points
+    bl = [x, y]
+    br = [x + width, y]
+    tr = [x + width, y + height]
+    tl = [x, y + height]
+
+    # Get the transform
+    transform = rect.get('transform', None)
+    if transform:
+        transform = simpletransform.parseTransform(transform)
+        simpletransform.applyTransformToPoint(transform, bl)
+        simpletransform.applyTransformToPoint(transform, br)
+        simpletransform.applyTransformToPoint(transform, tr)
+        simpletransform.applyTransformToPoint(transform, tl)
+
+    # Extend the box
+    if box is None:
+        box = BoundingBox(bl[0], bl[0], bl[1], bl[1])
+    else:
+        box.extend(bl)
+    box.extend(br)
+    box.extend(tr)
+    box.extend(tl)
+
+    # And done.
+    return box
+
 def object_bounding_box(obj, box=None):
     """Get the bounding box of an SVG object.
 
@@ -606,19 +658,18 @@ def object_bounding_box(obj, box=None):
     extended to encompass the object and returned. Otherwise, a new bounding
     box is created and returned.
 
-    Currently, this function can only handle ``path`` objects.
+    Currently, this function can only handle ``path`` and ``rect`` objects.
 
     """
 
     if obj.tag == 'path' or obj.tag == inkex.addNS('path', 'svg'):
-        objbox = path_bounding_box(obj)
+        objbox = path_bounding_box(obj, box)
+    elif obj.tag in ['rect', inkex.addNS('rect', 'svg')]:
+        objbox = rect_bounding_box(obj, box)
     else:
         objbox = BoundingBox(0, 0, 0, 0)
 
-    if box is None:
-        return objbox
-    else:
-        return box.combine(objbox)
+    return objbox
 
 def draw_bounding_box(obj, style=None, replace=False):
     """Draws the bounding box of the given object.
