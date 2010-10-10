@@ -1,11 +1,11 @@
-Module reference
-================
+Module information
+==================
 
 The bounds module is designed to be used in Inkscape extensions, and provides
 the ability to calculate the bounding boxes of SVG objects.
 
-Version
--------
+Version checking
+----------------
 
 Version information is stored as module attributes in the same manner as the
 Python ``sys`` module. This can be used to check which version of the module is
@@ -30,53 +30,3 @@ being used.
    the third byte the revision, the first half of the final byte the release
    level ('a', 'b', 'c', or 'f') and the final half-byte the serial. For
    example, ``0x000900a1``.
-
-BoundingBox
------------
-
-.. autoclass:: bounds.BoundingBox
-   :members:
-
-   **Attributes**
-
-   .. attribute:: left
-
-      The left-hand edge of the bounding box.
-
-   .. attribute:: right
-
-      The right-hand edge of the bounding box.
-
-   .. attribute:: bottom
-
-      The bottom edge of the bounding box.
-
-   .. attribute:: top
-
-      The top edge of the bounding box.
-
-   **Methods**
-
-Measurement functions
----------------------
-
-Any object
-++++++++++
-
-.. autofunction:: bounds.object_bounding_box
-
-Path
-++++
-
-.. autofunction:: bounds.path_bounding_box
-
-Bézier curves
-+++++++++++++
-
-.. autofunction:: bounds.quadratic_bounding_box
-.. autofunction:: bounds.cubic_bounding_box
-
-Helper functions
-----------------
-
-.. autofunction:: bounds.draw_bounding_box

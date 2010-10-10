@@ -1,0 +1,263 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Elliptical arcs &mdash; inkscape-pybounds 0.9.0 alpha 1</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0 alpha 1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" />
+    <link rel="next" title="Code license" href="codelicense.html" />
+    <link rel="prev" title="Bézier curves" href="bezier.html" />
+ 
+<script type="text/javascript" src="templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+  </head>
+  <body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="index.html">inkscape-pybounds 0.9.0 alpha 1</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="index.html">Home</a>  |
+        <a title="Global index" href="genindex.html">Index</a>  |
+      </div>
+      <div class="nav">
+    &laquo; <a href="bezier.html" title="Bézier curves">previous</a>
+     |
+    <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
+   |
+    <a href="codelicense.html" title="Code license">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="elliptarc">
+            
+  <div class="section" id="elliptical-arcs">
+<span id="elliptarc"></span><h1>Elliptical arcs<a class="headerlink" href="#elliptical-arcs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>SVG defines an elliptical arc with the following parameters:</p>
+<ul class="simple">
+<li><img class="math" src="images/math/b354638f824de285dce6d6d3f72163cb287aeff7.png" alt="(x_1,y_1)"/> - The starting point of the arc, taken from the end point
+of the previous segment.</li>
+<li><img class="math" src="images/math/4fd20127a6202979545151c53c61a56a8a0596d9.png" alt="r_x"/> - The semimajor (x) radius.</li>
+<li><img class="math" src="images/math/e63ac1cf60582e599a6e56ccae086ebf94ec650e.png" alt="r_y"/> - The semiminor (y) radius.</li>
+<li><img class="math" src="images/math/921aade3100afbc11d0d13f71cdd7e68d83ad52e.png" alt="\varphi"/> - The rotation of the x-axis of the ellipse from the x-axis
+of the image.</li>
+<li><img class="math" src="images/math/88eaf06b15af44e71774a3a7078aa5acc50abca5.png" alt="f_A"/> - The large arc flag. If it is set to 0, an arc spanning 180
+degrees or less is chosen. If it is 1, the arc is greater than 180 degrees.</li>
+<li><img class="math" src="images/math/bf45474772a4c15b9f4326229c039ca5f04872af.png" alt="f_S"/> - The sweep flag. If it is set to 0, the arc sweeps through
+decreasing angles. If it is 1, the arc sweeps through increasing angles.</li>
+<li><img class="math" src="images/math/871e8d2e83189f86381352faa5c18c2d0cf3f3b2.png" alt="(x_2,y_2)"/> - The end point of the arc.</li>
+</ul>
+</div>
+<div class="section" id="centre-point">
+<h2>Centre point<a class="headerlink" href="#centre-point" title="Permalink to this headline">¶</a></h2>
+<p>The centre point <img class="math" src="images/math/8be7c2f301d1d96aeee14958dfd233ee367a7268.png" alt="(c_x,c_y)"/> is calculated in three steps. Firstly, the
+midpoint of the line joining the start and end points is calculated:</p>
+<div class="math">
+<p><img src="images/math/4bdc0d5fc0ca5d7abb48cb14d84c1cf6923a769c.png" alt="x_m &amp;= \frac{x_1-x_2}{2}\cos(\varphi) + \frac{y_1-y_2}{2}\sin(\varphi) \\
+y_m &amp;= -\frac{x_1-x_2}{2}\sin(\varphi) + \frac{y_1-y_2}{2}\cos(\varphi)" /></p>
+</div><p>An intermediate value of the centre points are then calculated with the
+equations</p>
+<div class="math">
+<p><img src="images/math/cdbd681e23a2c77168b4512636dab54d42ef10cc.png" alt="c_x' &amp;= \pm\sqrt{\frac{r_x^2r_y^2 - r_x^2y_m^2 - r_y^2x_m^2}{r_x^2y_m^2 + r_y^2x_m^2}}\times\frac{r_xy_m}{r_y} \\
+c_y' &amp;= \pm\sqrt{\frac{r_x^2r_y^2 - r_x^2y_m^2 - r_y^2x_m^2}{r_x^2y_m^2 + r_y^2x_m^2}}\times-\frac{r_yx_m}{r_x}" /></p>
+</div><p>where the + sign is chosen if the two flags are different (<img class="math" src="images/math/1653eee573d296b10f6c2511a6b0fbec7fa3c041.png" alt="f_A \neq f_S"/>)
+and the - sign is chosen if the flags are the same (<img class="math" src="images/math/e52b474406d04fa8774efe203f3ec3d4722f0ebd.png" alt="f_A = f_S"/>). Finally,
+the centre point is calculated:</p>
+<div class="math">
+<p><img src="images/math/a5b29f7ddb073cc68432446e682df2a425b41103.png" alt="c_x &amp;= \cos(\varphi)c_x' - \sin(\varphi)c_y' + \frac{x_1 + x_2}{2} \\
+c_y &amp;= \sin(\varphi)c_x' + \cos(\varphi)c_y' + \frac{y_1 + y_2}{2}" /></p>
+</div></div>
+<div class="section" id="starting-and-sweep-angles">
+<h2>Starting and sweep angles<a class="headerlink" href="#starting-and-sweep-angles" title="Permalink to this headline">¶</a></h2>
+<p>The angle between two vectors <img class="math" src="images/math/001fe9df9979422f039d5465579326959eb86c16.png" alt="\vec{a}"/> and <img class="math" src="images/math/ffa9b4c31668cbee7b69c548c2e7c59e23882c8e.png" alt="\vec{b}"/> is given by</p>
+<div class="math">
+<p><img src="images/math/6b135d5747b2d29fdfbe0bd10b21e282cb48a3dd.png" alt="\Theta(\vec{a}, \vec{b}) = \mathrm{atan2}(b_y, b_x) - \mathrm{atan2}(a_y, a_x)" /></p>
+</div><p>The <img class="math" src="images/math/36f7a868c9533583afdc1b42ba57c7679ae60277.png" alt="\mathrm{atan2}(y,x)"/> function is provided by most math libraries. It
+returns the arctangent of <img class="math" src="images/math/c471843498de1d9d0b05ad7f32eab45e216577b4.png" alt="\frac{y}{x}"/>, using the signs of the inputs to
+get the correct quadrant for the angle. See the <a class="reference external" href="http://docs.python.org/library/math.html#trigonometric-functions">Python math library
+documentation</a>
+for further information on <img class="math" src="images/math/0f87590cba53e3316441ee57f430cf07233c044b.png" alt="\mathrm{atan2}"/>.</p>
+<p>The starting angle of the arc is calculated as follows:</p>
+<div class="math">
+<p><img src="images/math/55b05d6b261d15c2b006106fbb568090ba2da7e9.png" alt="\vec{a} &amp;= (1, 0) \\
+ \vec{b} &amp;= \left(\frac{x_m - c_x'}{r_x}, \frac{y_m - c_y'}{r_y}\right) \\
+\theta_1 &amp;= \Theta(\vec{a}, \vec{b})" /></p>
+</div><p>The angle that the arc sweeps over is calculated as:</p>
+<div class="math">
+<p><img src="images/math/349c931a76433601f3ddbb4bada3fc0f479a5a7b.png" alt="\vec{c} &amp;= \left(\frac{-x_m - c_x'}{r_x}, \frac{-y_m - c_y'}{r_y}\right) \\
+\Delta\theta &amp;= \Theta(\vec{b}, \vec{c}) \mod 360^\circ" /></p>
+</div><p><img class="math" src="images/math/e9349464619eccca4e113de55b226de6db3a52b3.png" alt="\Delta\theta"/> is adjusted by adding or subtracting 360 degrees as
+necessary to meet the conditions</p>
+<div class="math">
+<p><img src="images/math/95a48ae80d4f53e7f282eb2a6aef1ad6c098e34e.png" alt="&amp;\Delta\theta &lt; 0 \qquad f_S = 0 \\
+&amp;\Delta\theta &gt; 0 \qquad \mathrm{otherwise}" /></p>
+</div></div>
+<div class="section" id="extrema">
+<h2>Extrema<a class="headerlink" href="#extrema" title="Permalink to this headline">¶</a></h2>
+<p>The point <img class="math" src="images/math/e53b1fe25be1c679117fb44a6a886fe1247d189a.png" alt="(x,y)"/> at an angle <img class="math" src="images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta"/> from the centre is given by
+the equations</p>
+<div class="math" id="equation-arcpos">
+<p><span class="eqno">(1)</span><img src="images/math/319dc6b5e4735ebb275d5b362b6701c6444901fd.png" alt="x(\theta) &amp;= c_x + r_x\cos(\theta)\cos(\varphi) - r_y\sin(\theta)\sin(\varphi) \\
+y(\theta) &amp;= c_y + r_x\cos(\theta)\sin(\varphi) + r_y\sin(\theta)\cos(\varphi)" /></p>
+</div><p>To find the angles at which any extrema are located, we differentiate these
+functions and solve for <img class="math" src="images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta"/> when the derivative is zero. Remembering
+that <img class="math" src="images/math/921aade3100afbc11d0d13f71cdd7e68d83ad52e.png" alt="\varphi"/> and hence <img class="math" src="images/math/f0cb8da7d0bedcb46b57926b248273da4fd03f43.png" alt="\cos(\varphi)"/> and <img class="math" src="images/math/b925144480e81a02bfbbb0f052bc4308b17af31c.png" alt="\sin(\varphi)"/>
+are constants, the derivatives of these functions are:</p>
+<div class="math">
+<p><img src="images/math/efc7840150aebccac16283fd748e1432be695b9d.png" alt="\frac{\mathrm{d}x(\theta)}{\mathrm{d}\theta} &amp;= -r_x\sin(\theta)\cos(\varphi) - r_y\cos(\theta)\sin(\varphi) \\
+\frac{\mathrm{d}y(\theta)}{\mathrm{d}\theta} &amp;= -r_x\sin(\theta)\sin(\varphi) + r_y\cos(\theta)\cos(\varphi)" /></p>
+</div><p>Setting these to zero and solving for <img class="math" src="images/math/52e8ed7a3ba22130ad3984eb2cd413406475a689.png" alt="\theta"/> gives the angles at which
+extrema occur as</p>
+<div class="math">
+<p><img src="images/math/c215360353d7fcca14bc6dc358f2cc48ec82b606.png" alt="\theta_x &amp;= \arctan\left(-\frac{r_y}{r_x}\tan(\varphi)\right) \\
+\theta_y &amp;= \arctan\left(\frac{r_y}{r_x}\cot(\varphi)\right)" /></p>
+</div><p>Due to the periodic nature of the trigonometric functions, these will give
+multiple solutions. We restrict the values to those that are swept by the arc,
+and then find the values of the extrema by evaluating <a href="#equation-arcpos">(1)</a> at these
+locations. Along with the start and end points of the arc, these extrema are
+then used to generate the bounding box of the arc.</p>
+</div>
+<div class="section" id="external-links">
+<h2>External links<a class="headerlink" href="#external-links" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes">Arc implementation notes</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Elliptical arcs</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#centre-point">Centre point</a></li>
+<li><a class="reference internal" href="#starting-and-sweep-angles">Starting and sweep angles</a></li>
+<li><a class="reference internal" href="#extrema">Extrema</a></li>
+<li><a class="reference internal" href="#external-links">External links</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>Browse</h3>
+  <ul>
+    
+      <li>Prev: <a href="bezier.html">Bézier curves</a></li>
+    
+    
+      <li>Next: <a href="codelicense.html">Code license</a></li>
+    
+  </ul>
+  <h3>You are here:</h3>
+  <ul>
+      <li>
+        <a href="index.html">inkscape-pybounds 0.9.0 alpha 1</a>
+        
+        <ul><li>Elliptical arcs</li></ul>
+        
+      </li>
+  </ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/elliptarc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">Oct 10, 2010</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="bezier.html" title="Bézier curves">previous</a>
+     |
+    <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
+   |
+    <a href="codelicense.html" title="Code license">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

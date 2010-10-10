@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Code license &mdash; inkscape-pybounds 0.9.0 alpha 1</title>
+    <title>Module information &mdash; inkscape-pybounds 0.9.0 alpha 1</title>
     <link rel="stylesheet" href="static/default.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
     <script type="text/javascript">
@@ -22,8 +22,8 @@
     <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
     <link rel="top" title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" />
-    <link rel="next" title="Documentation license" href="doclicense.html" />
-    <link rel="prev" title="Elliptical arcs" href="elliptarc.html" />
+    <link rel="next" title="BoundingBox" href="boundingbox.html" />
+    <link rel="prev" title="inkscape-pybounds" href="index.html" />
  
 <script type="text/javascript" src="templatebuiltins.js"></script>
 <script type="text/javascript">
@@ -71,31 +71,54 @@
         <a title="Global index" href="genindex.html">Index</a>  |
       </div>
       <div class="nav">
-    &laquo; <a href="elliptarc.html" title="Elliptical arcs">previous</a>
+    &laquo; <a href="index.html" title="inkscape-pybounds">previous</a>
      |
     <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
    |
-    <a href="doclicense.html" title="Documentation license">next</a> &raquo;</div>
+    <a href="boundingbox.html" title="BoundingBox">next</a> &raquo;</div>
     </div>
 
     <div id="bd">
       <div id="yui-main">
         <div class="yui-b">
-          <div class="yui-g" id="codelicense">
+          <div class="yui-g" id="moduleinfo">
             
-  <div class="section" id="code-license">
-<h1>Code license<a class="headerlink" href="#code-license" title="Permalink to this headline">¶</a></h1>
-<p>This program is Copyright (C) 2010 Blair Bonnett.</p>
-<p>This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.</p>
-<p>This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.</p>
-<p>You should have received a copy of the GNU General Public License
-along with this program.  If not, see <a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+  <div class="section" id="module-information">
+<h1>Module information<a class="headerlink" href="#module-information" title="Permalink to this headline">¶</a></h1>
+<p>The bounds module is designed to be used in Inkscape extensions, and provides
+the ability to calculate the bounding boxes of SVG objects.</p>
+<div class="section" id="version-checking">
+<h2>Version checking<a class="headerlink" href="#version-checking" title="Permalink to this headline">¶</a></h2>
+<p>Version information is stored as module attributes in the same manner as the
+Python <tt class="docutils literal"><span class="pre">sys</span></tt> module. This can be used to check which version of the module is
+being used.</p>
+<dl class="attribute">
+<dt id="bounds.version">
+<tt class="descclassname">bounds.</tt><tt class="descname">version</tt><a class="headerlink" href="#bounds.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module version information in a human-readable string, for example
+<tt class="docutils literal"><span class="pre">'0.9.0</span> <span class="pre">alpha</span> <span class="pre">1'</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bounds.version_info">
+<tt class="descclassname">bounds.</tt><tt class="descname">version_info</tt><a class="headerlink" href="#bounds.version_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>A tuple of module version information in the format
+(major_version, minor_version, revision, releaselevel, serial). All of these
+parameters are integers except for releaselevel which will be one of
+&#8216;alpha&#8217;, &#8216;beta&#8217;, &#8216;candidate&#8217;, or &#8216;final&#8217;. For example, <tt class="docutils literal"><span class="pre">(0,</span> <span class="pre">9,</span> <span class="pre">0,</span> <span class="pre">'alpha',</span> <span class="pre">1)</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="bounds.hexversion">
+<tt class="descclassname">bounds.</tt><tt class="descname">hexversion</tt><a class="headerlink" href="#bounds.hexversion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module version information encoded as a four-byte hexadecimal number. The
+most significant byte will be the major version, the next byte minor version,
+the third byte the revision, the first half of the final byte the release
+level (&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;, or &#8216;f&#8217;) and the final half-byte the serial. For
+example, <tt class="docutils literal"><span class="pre">0x000900a1</span></tt>.</p>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -108,13 +131,21 @@ along with this program.  If not, see <a class="reference external" href="http:/
             
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Module information</a><ul>
+<li><a class="reference internal" href="#version-checking">Version checking</a></li>
+</ul>
+</li>
+</ul>
+
   <h3>Browse</h3>
   <ul>
     
-      <li>Prev: <a href="elliptarc.html">Elliptical arcs</a></li>
+      <li>Prev: <a href="index.html">inkscape-pybounds</a></li>
     
     
-      <li>Next: <a href="doclicense.html">Documentation license</a></li>
+      <li>Next: <a href="boundingbox.html">BoundingBox</a></li>
     
   </ul>
   <h3>You are here:</h3>
@@ -122,14 +153,14 @@ along with this program.  If not, see <a class="reference external" href="http:/
       <li>
         <a href="index.html">inkscape-pybounds 0.9.0 alpha 1</a>
         
-        <ul><li>Code license</li></ul>
+        <ul><li>Module information</li></ul>
         
       </li>
   </ul>
 
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="sources/codelicense.txt"
+    <li><a href="sources/moduleinfo.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -156,11 +187,11 @@ along with this program.  If not, see <a class="reference external" href="http:/
 
     <div id="ft">
       <div class="nav">
-    &laquo; <a href="elliptarc.html" title="Elliptical arcs">previous</a>
+    &laquo; <a href="index.html" title="inkscape-pybounds">previous</a>
      |
     <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
    |
-    <a href="doclicense.html" title="Documentation license">next</a> &raquo;</div>
+    <a href="boundingbox.html" title="BoundingBox">next</a> &raquo;</div>
     </div>
   </div>
 

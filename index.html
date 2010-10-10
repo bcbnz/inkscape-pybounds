@@ -22,7 +22,7 @@
     <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
     <link rel="top" title="inkscape-pybounds 0.9.0 alpha 1" href="#" />
-    <link rel="next" title="Module reference" href="moduleref.html" />
+    <link rel="next" title="Module information" href="moduleinfo.html" />
  
 <script type="text/javascript" src="templatebuiltins.js"></script>
 <script type="text/javascript">
@@ -72,7 +72,7 @@
       <div class="nav">
     <a title="inkscape-pybounds 0.9.0 alpha 1" href="#" accesskey="U">up</a>
    |
-    <a href="moduleref.html" title="Module reference">next</a> &raquo;</div>
+    <a href="moduleinfo.html" title="Module information">next</a> &raquo;</div>
     </div>
 
     <div id="bd">
@@ -92,17 +92,35 @@ the objects with no overlap). Additionally, in an ideal world the code to work
 with SVG transforms and the code to calculate bounding boxes would live in
 separate modules.</p>
 <p>This project provides a Python module, <tt class="docutils literal"><span class="pre">bounds</span></tt>, which defines a
-<a class="reference internal" href="moduleref.html#bounds.BoundingBox" title="bounds.BoundingBox"><tt class="xref py py-class docutils literal"><span class="pre">bounds.BoundingBox</span></tt></a> class to represent a bounding box, and a number of
+<a class="reference internal" href="boundingbox.html#bounds.BoundingBox" title="bounds.BoundingBox"><tt class="xref py py-class docutils literal"><span class="pre">bounds.BoundingBox</span></tt></a> class to represent a bounding box, and a number of
 functions to calculate the bounding boxes of the various SVG objects. These
 bounding boxes should all be tight bounds.</p>
 <p><strong>Note: This module is currently under initial development (hence the alpha tag
-in the version). Bounding boxes cannot be calculated for a number of SVG
+in the version). Bounding boxes cannot yet be calculated for a number of SVG
 objects, and the API is liable to change without notice.</strong></p>
-<div class="section" id="user-guide">
-<h2>User guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-reference">
+<h2>Module reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="moduleref.html">Module reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="moduleinfo.html">Module information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="moduleinfo.html#version-checking">Version checking</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="boundingbox.html">BoundingBox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="measureobjs.html">Measuring SVG objects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="measureobjs.html#any-object">Any object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="measureobjs.html#path">Path</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="measuresegs.html">Measuring path segments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="measuresegs.html#bezier-curves">Bézier curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="measuresegs.html#elliptical-arcs">Elliptical arcs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="helperfuncs.html">Helper functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="helperfuncs.html#draw-bounding-box">draw_bounding_box</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -111,6 +129,7 @@ objects, and the API is liable to change without notice.</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="bezier.html">Bézier curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elliptarc.html">Elliptical arcs</a></li>
 </ul>
 </div>
 </div>
@@ -144,7 +163,7 @@ objects, and the API is liable to change without notice.</strong></p>
       <div class="nav">
     <a title="inkscape-pybounds 0.9.0 alpha 1" href="#" accesskey="U">up</a>
    |
-    <a href="moduleref.html" title="Module reference">next</a> &raquo;</div>
+    <a href="moduleinfo.html" title="Module information">next</a> &raquo;</div>
     </div>
   </div>
 

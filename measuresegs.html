@@ -1,0 +1,298 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Measuring path segments &mdash; inkscape-pybounds 0.9.0 alpha 1</title>
+    <link rel="stylesheet" href="static/default.css" type="text/css" />
+    <link rel="stylesheet" href="static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.9.0 alpha 1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="static/jquery.js"></script>
+    <script type="text/javascript" src="static/underscore.js"></script>
+    <script type="text/javascript" src="static/doctools.js"></script>
+    <link rel="top" title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" />
+    <link rel="next" title="Helper functions" href="helperfuncs.html" />
+    <link rel="prev" title="Measuring SVG objects" href="measureobjs.html" />
+ 
+<script type="text/javascript" src="templatebuiltins.js"></script>
+<script type="text/javascript">
+(function($) {
+    if (!django_template_builtins) {
+       // templatebuiltins.js missing, do nothing.
+       return;
+    }
+    $(document).ready(function() {
+        // Hyperlink Django template tags and filters
+        var base = "ref/templates/builtins.html";
+        if (base == "#") {
+            // Special case for builtins.html itself
+            base = "";
+        }
+        // Tags are keywords, class '.k'
+        $("div.highlight\\-html\\+django span.k").each(function(i, elem) {
+             var tagname = $(elem).text();
+             if ($.inArray(tagname, django_template_builtins.ttags) != -1) {
+                 var fragment = tagname.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + tagname + "</a>");
+             }
+        });
+        // Filters are functions, class '.nf'
+        $("div.highlight\\-html\\+django span.nf").each(function(i, elem) {
+             var filtername = $(elem).text();
+             if ($.inArray(filtername, django_template_builtins.tfilters) != -1) {
+                 var fragment = filtername.replace(/_/, '-');
+                 $(elem).html("<a href='" + base + "#" + fragment + "'>" + filtername + "</a>");
+             }
+        });
+    });
+})(jQuery);
+</script>
+
+  </head>
+  <body>
+
+    <div class="document">
+  <div id="custom-doc" class="yui-t6">
+    <div id="hd">
+      <h1><a href="index.html">inkscape-pybounds 0.9.0 alpha 1</a></h1>
+      <div id="global-nav">
+        <a title="Home page" href="index.html">Home</a>  |
+        <a title="Global index" href="genindex.html">Index</a>  |
+      </div>
+      <div class="nav">
+    &laquo; <a href="measureobjs.html" title="Measuring SVG objects">previous</a>
+     |
+    <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
+   |
+    <a href="helperfuncs.html" title="Helper functions">next</a> &raquo;</div>
+    </div>
+
+    <div id="bd">
+      <div id="yui-main">
+        <div class="yui-b">
+          <div class="yui-g" id="measuresegs">
+            
+  <div class="section" id="measuring-path-segments">
+<h1>Measuring path segments<a class="headerlink" href="#measuring-path-segments" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bezier-curves">
+<h2>Bézier curves<a class="headerlink" href="#bezier-curves" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bounds.quadratic_bounding_box">
+<tt class="descclassname">bounds.</tt><tt class="descname">quadratic_bounding_box</tt><big>(</big><em>p0</em>, <em>p1</em>, <em>p2</em>, <em>box=None</em><big>)</big><a class="headerlink" href="#bounds.quadratic_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the bounding box of a quadratic Bézier curve.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p0</strong> &#8211; The start point of the curve.</li>
+<li><strong>p1</strong> &#8211; The control point of the curve.</li>
+<li><strong>p2</strong> &#8211; The end point of the curve.</li>
+<li><strong>box</strong> &#8211; The current bounding box if available.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <a class="reference internal" href="boundingbox.html#bounds.BoundingBox" title="bounds.BoundingBox"><tt class="xref py py-class docutils literal"><span class="pre">bounds.BoundingBox</span></tt></a> encompassing the curve.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The three points defining the curve must be given as pairs of numbers
+<tt class="docutils literal"><span class="pre">(x,y)</span></tt>.</p>
+<p>If an existing BoundingBox is given in the <tt class="docutils literal"><span class="pre">box</span></tt> argument, it is extended
+as necessary to encompass the curve and then returned. If no box is given,
+a new one encompassing the curve is created and returned.</p>
+<p>See the <a class="reference internal" href="bezier.html#bezier"><em>Bézier curves</em></a> page in the accompanying documentation for further
+details on how Bézier curves are defined, and how their bounding boxes are
+calculated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="bounds.cubic_bounding_box">
+<tt class="descclassname">bounds.</tt><tt class="descname">cubic_bounding_box</tt><big>(</big><em>p0</em>, <em>p1</em>, <em>p2</em>, <em>p3</em>, <em>box=None</em><big>)</big><a class="headerlink" href="#bounds.cubic_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the bounding box of a cubic Bézier curve.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>p0</strong> &#8211; The start point of the curve.</li>
+<li><strong>p1</strong> &#8211; The first control point of the curve.</li>
+<li><strong>p2</strong> &#8211; The second control point of the curve.</li>
+<li><strong>p3</strong> &#8211; The end point of the curve.</li>
+<li><strong>box</strong> &#8211; The current bounding box if available.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <a class="reference internal" href="boundingbox.html#bounds.BoundingBox" title="bounds.BoundingBox"><tt class="xref py py-class docutils literal"><span class="pre">bounds.BoundingBox</span></tt></a> encompassing the curve.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The four points defining the curve must be given as pairs of numbers
+<tt class="docutils literal"><span class="pre">(x,y)</span></tt>.</p>
+<p>If an existing BoundingBox is given in the <tt class="docutils literal"><span class="pre">box</span></tt> argument, it is extended
+as necessary to encompass the curve and then returned. If no box is given,
+a new one encompassing the curve is created and returned.</p>
+<p>See the <a class="reference internal" href="bezier.html#bezier"><em>Bézier curves</em></a> page in the accompanying documentation for further
+details on how Bézier curves are defined, and how their bounding boxes are
+calculated.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="elliptical-arcs">
+<h2>Elliptical arcs<a class="headerlink" href="#elliptical-arcs" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="bounds.elliptical_arc_bounding_box">
+<tt class="descclassname">bounds.</tt><tt class="descname">elliptical_arc_bounding_box</tt><big>(</big><em>start</em>, <em>rx</em>, <em>ry</em>, <em>rotation</em>, <em>large_arc</em>, <em>sweep</em>, <em>end</em>, <em>box=None</em><big>)</big><a class="headerlink" href="#bounds.elliptical_arc_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the bounding box for an SVG elliptical arc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> &#8211; The start point of the arc.</li>
+<li><strong>rx</strong> &#8211; The semi-major (x) radius of the arc.</li>
+<li><strong>ry</strong> &#8211; The semi-minor (y) radius of the arc.</li>
+<li><strong>rotation</strong> &#8211; The angle at which the x-axis of the arc is rotated from
+the x-axis of the image.</li>
+<li><strong>large_arc</strong> &#8211; If the angle swept by the arc is greater than 180 degrees.</li>
+<li><strong>sweep</strong> &#8211; Which direction the arc is swept in.</li>
+<li><strong>end</strong> &#8211; The end point of the arc.</li>
+<li><strong>box</strong> &#8211; The current bounding box if available.</li>
+</ul>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <a class="reference internal" href="boundingbox.html#bounds.BoundingBox" title="bounds.BoundingBox"><tt class="xref py py-class docutils literal"><span class="pre">bounds.BoundingBox</span></tt></a> encompassing the arc.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>One of the types of segments available for use in an SVG path is the
+elliptical arc. This is largely defined from the start and end points, and
+the semi-major and semi-minor radii. This gives four possible arcs; the
+<tt class="docutils literal"><span class="pre">large_arc</span></tt> and <tt class="docutils literal"><span class="pre">sweep</span></tt> flags set which arc is used. If <tt class="docutils literal"><span class="pre">sweep</span></tt> is
+zero, the arg is swept through decreasing angles; otherwise it is swept
+through increasing angles. If <tt class="docutils literal"><span class="pre">large_arc</span></tt> is zero, the arc will span 180
+degrees or less; otherwise, it will be greater than 180 degrees. Finally,
+the x-axis of the arc can be rotated from the x-axis of the image; the
+angle it is rotated at (in degrees) is given by the <tt class="docutils literal"><span class="pre">rotation</span></tt> parameter.</p>
+<p>This function calculates the bounding box necessary to contain an
+elliptical arc. If an existing BoundingBox is given in the <tt class="docutils literal"><span class="pre">box</span></tt>
+argument, it is extended as necessary to encompass the arc and then
+returned. If no box is given, a new one encompassing the arc is created and
+returned.</p>
+<p>As per the SVG 1.1 specification, out-of-range parameters are handled as
+follows:</p>
+<ul class="simple">
+<li>If the start and end points are the same, the arc is not drawn. In this
+case, the value of the <tt class="docutils literal"><span class="pre">box</span></tt> parameter (an existing bounding box or
+<tt class="xref docutils literal"><span class="pre">None</span></tt>) is returned.</li>
+<li>If either <tt class="docutils literal"><span class="pre">rx</span></tt> or <tt class="docutils literal"><span class="pre">ry</span></tt> is zero, the arc is treated as a straight line
+segment.</li>
+<li>If either <tt class="docutils literal"><span class="pre">rx</span></tt> or <tt class="docutils literal"><span class="pre">ry</span></tt> are negative, the absolute value is used as
+the corresponding radius.</li>
+<li>If <tt class="docutils literal"><span class="pre">rx</span></tt>, <tt class="docutils literal"><span class="pre">ry</span></tt> and <tt class="docutils literal"><span class="pre">rotation</span></tt> are such that the ellipse is not big
+enough to reach from the start to the end, the ellipse is scaled
+uniformly until it can reach.</li>
+<li>Any non-zero value for either <tt class="docutils literal"><span class="pre">large_arc</span></tt> or <tt class="docutils literal"><span class="pre">sweep</span></tt> is treated as if
+the value <tt class="docutils literal"><span class="pre">1</span></tt> was given.</li>
+</ul>
+<p>See the <a class="reference internal" href="elliptarc.html#elliptarc"><em>Elliptical arcs</em></a> page in the accompanying documentation for further
+details on how elliptical arcs are defined, and how their bounding boxes
+are calculated.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      
+        
+          <div class="yui-b" id="sidebar">
+            
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Measuring path segments</a><ul>
+<li><a class="reference internal" href="#bezier-curves">Bézier curves</a></li>
+<li><a class="reference internal" href="#elliptical-arcs">Elliptical arcs</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>Browse</h3>
+  <ul>
+    
+      <li>Prev: <a href="measureobjs.html">Measuring SVG objects</a></li>
+    
+    
+      <li>Next: <a href="helperfuncs.html">Helper functions</a></li>
+    
+  </ul>
+  <h3>You are here:</h3>
+  <ul>
+      <li>
+        <a href="index.html">inkscape-pybounds 0.9.0 alpha 1</a>
+        
+        <ul><li>Measuring path segments</li></ul>
+        
+      </li>
+  </ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="sources/measuresegs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+              <h3>Last update:</h3>
+              <p class="topless">Oct 10, 2010</p>
+          </div>
+        
+      
+    </div>
+
+    <div id="ft">
+      <div class="nav">
+    &laquo; <a href="measureobjs.html" title="Measuring SVG objects">previous</a>
+     |
+    <a title="inkscape-pybounds 0.9.0 alpha 1" href="index.html" accesskey="U">up</a>
+   |
+    <a href="helperfuncs.html" title="Helper functions">next</a> &raquo;</div>
+    </div>
+  </div>
+
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
