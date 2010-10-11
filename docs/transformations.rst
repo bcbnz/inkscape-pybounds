@@ -101,14 +101,15 @@ Combining transformations
 -------------------------
 
 Multiple transformations can be combined into one via `matrix multiplication
-<http://en.wikipedia.org/wiki/Matrix_multiplication>` in the order they are to
-be applied. For example, if a translation (represented by matrix :math:`\mathbf{T}`)
-is to be followed by a scale (:math:`\mathbf{S}`), the resulting matrix is
+<http://en.wikipedia.org/wiki/Matrix_multiplication>` in the reverse order that
+they are to be applied. For example, if a translation (represented by matrix
+:math:`\mathbf{T}`) is to be followed by scaling (:math:`\mathbf{S}`), and
+finally a rotation (:math:`\mathbf{R}`), the overall matrix is
 given by
 
 .. math::
 
-   \mathbf{M} = \mathbf{T}\times\mathbf{S}
+   \mathbf{M} = \mathbf{R}\times\mathbf{S}\times\mathbf{T}
 
 Applying transformations
 ------------------------
@@ -133,3 +134,8 @@ This can be broken down into the following equations:
 
    x_t &= ax + cy + e \\
    y_t &= bx + dy + f
+
+External links
+--------------
+
+* `Geometric transforms <http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/geometry/geo-tran.html>`_
