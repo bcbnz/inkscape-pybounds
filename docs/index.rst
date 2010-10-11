@@ -39,6 +39,7 @@ Implementation notes
 .. toctree::
    :maxdepth: 1
 
+   transformations
    bezier
    elliptarc
 
